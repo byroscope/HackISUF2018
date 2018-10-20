@@ -17,11 +17,12 @@ public class VoiceRecog : MonoBehaviour
 
     void Start()
     {
-        m_Keywords = new string[4];
+        m_Keywords = new string[5];
         m_Keywords[0] = "sit";
         m_Keywords[1] = "stand";
         m_Keywords[2] = "walk";
         m_Keywords[3] = "text";
+        m_Keywords[4] = "run";
         m_Recognizer = new KeywordRecognizer(m_Keywords);
         m_Recognizer.OnPhraseRecognized += OnPharseRecognized;
         m_Recognizer.Start();
@@ -35,28 +36,37 @@ public class VoiceRecog : MonoBehaviour
        // float newY = (0);
         float newZ = (1);
 
+        print("args.text");
+
         if (args.text == m_Keywords[0])
         {
-            Instantiate(Cube, new Vector3(newX, newZ, newY), Quaternion.identity);
+            //Instantiate(Cube, new Vector3(newX, newZ, newY), Quaternion.identity);
             dog.SitButtonClicked();
+           
         }
 
         if (args.text == m_Keywords[1])
         {
-            Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
+            //Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
             dog.StandButtonClicked();
         }
 
         if (args.text == m_Keywords[2])
         {
-            Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
+            //Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
             dog.Walk();
         }
 
         if (args.text == m_Keywords[3])
         {
-            Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
+            //Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
             
+        }
+        if (args.text == m_Keywords[4])
+        {
+            //Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
+            dog.Run();
+
         }
 
 

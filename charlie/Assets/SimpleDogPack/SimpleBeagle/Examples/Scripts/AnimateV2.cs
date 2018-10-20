@@ -24,8 +24,9 @@ public class AnimateV2 : MonoBehaviour {
 	private GameObject StandButton;
 	private GameObject SitButton;
 	private GameObject ConsumeButton;
+    public Rigidbody RigBody;
 
-	private float CrossfadeVal = 0.25f;
+    private float CrossfadeVal = 0.25f;
 	void Start () 
 	{
 		AggressiveButton = GameObject.Find("Aggressive");
@@ -37,9 +38,14 @@ public class AnimateV2 : MonoBehaviour {
 		anim = GetComponent<Animator> ();
 		AnimatorName = anim.name;
 		print ("name " + AnimatorName);
-	}
 
-	void Update () 
+        //RigBody = new GameObject("Test Object"); // Make a new GO.
+        //Rigidbody gameObjectsRigidBody = RigBody.AddComponent<Rigidbody>(); // Add the rigidbody.
+       //gameObjectsRigidBody.mass = 5;
+
+    }
+
+    void Update () 
 	{
 
         Vector3.Lerp(transform.position, desiredPosition, speed * Time.deltaTime);
@@ -153,10 +159,6 @@ public class AnimateV2 : MonoBehaviour {
 		Move = 0;
 		CurrentButtonPressed = "Sit";
 		anim.SetFloat ("Move", Move);
-        //print("about to move");
-        //desiredPosition = transform.position + new Vector3(10, 0, 0);
-        //iTween.MoveBy(gameObject, iTween.Hash("y", 4, "time", 2, "easeType", "linear"));
-        //print("moved");
     }
 	public void LayButtonClicked()
 	{
@@ -224,16 +226,47 @@ public class AnimateV2 : MonoBehaviour {
 		}
 		Pose = 4;
 		CurrentButtonPressed = "Walk";
-        //iTween.MoveBy(gameObject, iTween.Hash("z", .1, "time", 1.3, "easeType", "linear"));
-       // iTween.MoveBy(gameObject, iTween.Hash("z", 4, "time", 2, "easeType", "linear"));
+    }
+
+    public void RunButtonClicked()
+    {
+         if (Move < 3 && !BackWards)
+         {
+             Move++;
+          }
+          else
+          {
+             BackWards = true;
+               Move--;
+                 if (Move == 1)
+                {
+                   BackWards = false;
+                }
+         }
+         anim.SetFloat("Move", Move);
+
+          if (Pose != 4)
+         {
+             ChangePose = true;
+             //ResetButtonNames ();
+          }
+          Pose = 4;
+          CurrentButtonPressed = "Walk";
+       
     }
 
     public void Walk()
     {
         WalkButtonClicked();
-       // iTween.MoveBy(gameObject, iTween.Hash("z", .1, "time", 1.3, "easeType", "linear"));
-        //Thread.Sleep(1300);
         iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 2, "time", 5, "easeType", "linear"));
+    }
+
+    public void Run()
+    {
+        RunButtonClicked();
+        RunButtonClicked();
+        RunButtonClicked();
+        iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 6, "time", 10, "easeType", "linear"));
     }
 
     void ResetButtonNames()
