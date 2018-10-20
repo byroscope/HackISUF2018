@@ -17,7 +17,7 @@ public class VoiceRecog : MonoBehaviour
 
     void Start()
     {
-        m_Keywords = new string[3];
+        m_Keywords = new string[4];
         m_Keywords[0] = "sit";
         m_Keywords[1] = "stand";
         m_Keywords[2] = "walk";
