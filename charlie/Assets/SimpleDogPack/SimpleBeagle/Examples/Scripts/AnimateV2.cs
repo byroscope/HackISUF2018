@@ -48,10 +48,6 @@ public class AnimateV2 : MonoBehaviour {
         AnimatorName = anim.name;
         print("name " + AnimatorName);
 
-        //RigBody = new GameObject("Test Object"); // Make a new GO.
-        //Rigidbody gameObjectsRigidBody = RigBody.AddComponent<Rigidbody>(); // Add the rigidbody.
-        //gameObjectsRigidBody.mass = 5;
-
     }
 
     void Update()
@@ -159,7 +155,7 @@ public class AnimateV2 : MonoBehaviour {
                 word.GetComponent<TextMesh>().text = "The dog found a stick!\nMoe and the dog\ndecide to play fetch";
                 break;
             case 5:
-                word.GetComponent<TextMesh>().text = "The dog gleefuly chases\nafter the stck that his new\nfriend had thrown";
+                word.GetComponent<TextMesh>().text = "The dog gleefuly chases\nafter the stick that his new\nfriend had thrown";
                 break;
             case 6:
                 word.GetComponent<TextMesh>().text = "Goodbye doggo!";
