@@ -4,255 +4,257 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
 using System.Threading;
+using System.Timers;
 
 public class AnimateV2 : MonoBehaviour {
 
-	private Animator anim;
-	private string AnimatorName;
-	private int Move;
-	int Pose = 0;
-	int CurrentPose = 0;
-	bool ChangePose = false;
-	public bool StateChangeComplete = true;
-	//public GameObject target;
-	private string CurrentButtonPressed = "Stand";
+    private Animator anim;
+    private string AnimatorName;
+    private int Move;
+    int Pose = 0;
+    int CurrentPose = 0;
+    bool ChangePose = false;
+    public bool StateChangeComplete = true;
+    //public GameObject target;
+    private string CurrentButtonPressed = "Stand";
     float speed = 10;
     Vector3 desiredPosition;
+    private static System.Timers.Timer aTimer;
+
+    public Rigidbody sticky;
 
     private GameObject AggressiveButton;
-	private GameObject LayButton;
-	private GameObject StandButton;
-	private GameObject SitButton;
-	private GameObject ConsumeButton;
+    private GameObject LayButton;
+    private GameObject StandButton;
+    private GameObject SitButton;
+    private GameObject ConsumeButton;
     public Rigidbody RigBody;
-
+    public Rigidbody enviroFloor;
     private float CrossfadeVal = 0.25f;
-	void Start () 
-	{
-		AggressiveButton = GameObject.Find("Aggressive");
-		LayButton = GameObject.Find("Lay");
-		StandButton = GameObject.Find("Stand");
-		SitButton = GameObject.Find("Sit");
-		ConsumeButton = GameObject.Find("Consume");
+    void Start()
+    {
+        AggressiveButton = GameObject.Find("Aggressive");
+        LayButton = GameObject.Find("Lay");
+        StandButton = GameObject.Find("Stand");
+        SitButton = GameObject.Find("Sit");
+        ConsumeButton = GameObject.Find("Consume");
 
-		anim = GetComponent<Animator> ();
-		AnimatorName = anim.name;
-		print ("name " + AnimatorName);
+        anim = GetComponent<Animator>();
+        AnimatorName = anim.name;
+        print("name " + AnimatorName);
 
         //RigBody = new GameObject("Test Object"); // Make a new GO.
         //Rigidbody gameObjectsRigidBody = RigBody.AddComponent<Rigidbody>(); // Add the rigidbody.
-       //gameObjectsRigidBody.mass = 5;
+        //gameObjectsRigidBody.mass = 5;
 
     }
 
-    void Update () 
-	{
+    void Update()
+    {
 
-        Vector3.Lerp(transform.position, desiredPosition, speed * Time.deltaTime);
-
-        if (ChangePose) 
-		{
-			print ("Change Pose");
-			ChangePose = false;
-			//if stands
-			if (CurrentPose == 0) {
-				if (Pose == 1) {
-					anim.CrossFade ( "IdleToAggressive", CrossfadeVal);
-				} else if (Pose == 2) {
-					anim.CrossFade ( "IdleToSit", CrossfadeVal);
-				} else if (Pose == 3) {
-					anim.CrossFade (  "IdleToLay", CrossfadeVal);
-				} 
-				else if (Pose == 5) {
-					anim.CrossFade (  "IdleToConsume", CrossfadeVal);
-				} 
-				CurrentPose = Pose;
-			}
-			//aggressive
-			else if (CurrentPose == 1) {
-				if (Pose == 0) {
-					anim.CrossFade ( "AggressiveToIdle", CrossfadeVal);
-				} else if (Pose == 2) {
-					anim.CrossFade ( "AggressiveToSitTrans", CrossfadeVal);
-				} else if (Pose == 3) {
-					anim.CrossFade ( "AggressiveToLayTrans", CrossfadeVal);
-				} else if (Pose == 4) {
-					anim.CrossFade (  "AggressiveToIdle", CrossfadeVal);
-				}
-				else if (Pose == 5) {
-					anim.CrossFade (  "AggressiveToEat", CrossfadeVal);
-				} 
-				CurrentPose = Pose;
-			}
-			//Sit
-			else if (CurrentPose == 2) {
-				if (Pose == 0) {
-					anim.CrossFade (  "SitToIdle", CrossfadeVal);
-				} else if (Pose == 1) {
-					anim.CrossFade (  "SitToAggressiveTrans", CrossfadeVal);
-				} else if (Pose == 3) {
-					anim.CrossFade (  "SitToLay", CrossfadeVal);
-				} else if (Pose == 4) {
-					anim.CrossFade (  "SitToIdle", CrossfadeVal);
-				}
-				else if (Pose == 5) {
-					anim.CrossFade (  "SitToEat", CrossfadeVal);
-				} 
-				CurrentPose = Pose;
-			}
-			//Lay
-			else if (CurrentPose == 3) {
-				if (Pose == 0) {
-					anim.CrossFade (  "LayToIdle", CrossfadeVal);
-				} else if (Pose == 1) {
-					anim.CrossFade (  "LayToAggressiveTrans", CrossfadeVal);
-				} else if (Pose == 2) {
-					anim.CrossFade (  "LayToSit", CrossfadeVal);
-				} else if (Pose == 4) {
-					anim.CrossFade (  "LayToIdle", CrossfadeVal);
-				}
-				else if (Pose == 5) {
-					anim.CrossFade (  "LayToEat", CrossfadeVal);
-				} 
-				CurrentPose = Pose;
-			}
-			//walk or consume
-			else if (CurrentPose == 4 || CurrentPose == 5) {
-				if (Pose == 0) {
-					anim.CrossFade (  "Idle", CrossfadeVal);
-				} else if (Pose == 1) {
-					anim.CrossFade (  "IdleToAggressive", CrossfadeVal);
-				} else if (Pose == 2) {
-					anim.CrossFade (  "IdleToSit", CrossfadeVal);
-				} else if (Pose == 3) {
-					anim.CrossFade (  "IdleToLay", CrossfadeVal);
-				}
-				else if (Pose == 5) {
-					anim.CrossFade (  "IdleToConsume", CrossfadeVal);
-				}
-				CurrentPose = Pose;
-			} 
-		}
-	}
-	public void StandButtonClicked()
-	{
-		if (CurrentButtonPressed != "Stand") {
-			Pose = 0;
-			ChangePose = true;
-			//ResetButtonNames ();
-		}else {
-			anim.CrossFade (  StandButton.GetComponentInChildren<Text> ().text, 0.5f);
-		}
-		Move = 0;
-		anim.SetFloat ("Move", Move);
-		CurrentButtonPressed = "Stand";
-	}
-	public void SitButtonClicked()
-	{
-		if (CurrentButtonPressed != "Sit") {
-			Pose = 2;
-			ChangePose = true;
-			//ResetButtonNames ();
-		}else {
-			anim.CrossFade (  SitButton.GetComponentInChildren<Text> ().text, 0.5f);
-		}
-		Move = 0;
-		CurrentButtonPressed = "Sit";
-		anim.SetFloat ("Move", Move);
+        if (ChangePose)
+        {
+            print("Change Pose");
+            ChangePose = false;
+            //if stands
+            if (CurrentPose == 0) {
+                if (Pose == 1) {
+                    anim.CrossFade("IdleToAggressive", CrossfadeVal);
+                } else if (Pose == 2) {
+                    anim.CrossFade("IdleToSit", CrossfadeVal);
+                } else if (Pose == 3) {
+                    anim.CrossFade("IdleToLay", CrossfadeVal);
+                }
+                else if (Pose == 5) {
+                    anim.CrossFade("IdleToConsume", CrossfadeVal);
+                }
+                CurrentPose = Pose;
+            }
+            //aggressive
+            else if (CurrentPose == 1) {
+                if (Pose == 0) {
+                    anim.CrossFade("AggressiveToIdle", CrossfadeVal);
+                } else if (Pose == 2) {
+                    anim.CrossFade("AggressiveToSitTrans", CrossfadeVal);
+                } else if (Pose == 3) {
+                    anim.CrossFade("AggressiveToLayTrans", CrossfadeVal);
+                } else if (Pose == 4) {
+                    anim.CrossFade("AggressiveToIdle", CrossfadeVal);
+                }
+                else if (Pose == 5) {
+                    anim.CrossFade("AggressiveToEat", CrossfadeVal);
+                }
+                CurrentPose = Pose;
+            }
+            //Sit
+            else if (CurrentPose == 2) {
+                if (Pose == 0) {
+                    anim.CrossFade("SitToIdle", CrossfadeVal);
+                } else if (Pose == 1) {
+                    anim.CrossFade("SitToAggressiveTrans", CrossfadeVal);
+                } else if (Pose == 3) {
+                    anim.CrossFade("SitToLay", CrossfadeVal);
+                } else if (Pose == 4) {
+                    anim.CrossFade("SitToIdle", CrossfadeVal);
+                }
+                else if (Pose == 5) {
+                    anim.CrossFade("SitToEat", CrossfadeVal);
+                }
+                CurrentPose = Pose;
+            }
+            //Lay
+            else if (CurrentPose == 3) {
+                if (Pose == 0) {
+                    anim.CrossFade("LayToIdle", CrossfadeVal);
+                } else if (Pose == 1) {
+                    anim.CrossFade("LayToAggressiveTrans", CrossfadeVal);
+                } else if (Pose == 2) {
+                    anim.CrossFade("LayToSit", CrossfadeVal);
+                } else if (Pose == 4) {
+                    anim.CrossFade("LayToIdle", CrossfadeVal);
+                }
+                else if (Pose == 5) {
+                    anim.CrossFade("LayToEat", CrossfadeVal);
+                }
+                CurrentPose = Pose;
+            }
+            //walk or consume
+            else if (CurrentPose == 4 || CurrentPose == 5) {
+                if (Pose == 0) {
+                    anim.CrossFade("Idle", CrossfadeVal);
+                } else if (Pose == 1) {
+                    anim.CrossFade("IdleToAggressive", CrossfadeVal);
+                } else if (Pose == 2) {
+                    anim.CrossFade("IdleToSit", CrossfadeVal);
+                } else if (Pose == 3) {
+                    anim.CrossFade("IdleToLay", CrossfadeVal);
+                }
+                else if (Pose == 5) {
+                    anim.CrossFade("IdleToConsume", CrossfadeVal);
+                }
+                CurrentPose = Pose;
+            }
+        }
     }
-	public void LayButtonClicked()
-	{
-		if (CurrentButtonPressed != "Lay") {
-			Pose = 3;
-			ChangePose = true;
-			ResetButtonNames ();
-		}else {
-			anim.CrossFade (  LayButton.GetComponentInChildren<Text> ().text, 0.5f);
-		}
+    public void StandButtonClicked()
+    {
+        if (CurrentButtonPressed != "Stand") {
+            Pose = 0;
+            ChangePose = true;
+            //ResetButtonNames ();
+        } else {
+            anim.CrossFade(StandButton.GetComponentInChildren<Text>().text, 0.5f);
+        }
+        Move = 0;
+        anim.SetFloat("Move", Move);
+        CurrentButtonPressed = "Stand";
+    }
+    public void SitButtonClicked()
+    {
+        if (CurrentButtonPressed != "Sit") {
+            Pose = 2;
+            ChangePose = true;
+            //ResetButtonNames ();
+        } else {
+            anim.CrossFade(SitButton.GetComponentInChildren<Text>().text, 0.5f);
+        }
+        Move = 0;
+        CurrentButtonPressed = "Sit";
+        anim.SetFloat("Move", Move);
+    }
+    public void LayButtonClicked()
+    {
+        if (CurrentButtonPressed != "Lay") {
+            Pose = 3;
+            ChangePose = true;
+            ResetButtonNames();
+        } else {
+            anim.CrossFade(LayButton.GetComponentInChildren<Text>().text, 0.5f);
+        }
 
 
-		Move = 0;
-		anim.SetFloat ("Move", Move);
-		CurrentButtonPressed = "Lay";
-	}
-	public void ConsumeButtonClicked()
-	{
-		if (CurrentButtonPressed != "Consume") 
-		{
-			Pose = 5;
-			ChangePose = true;
-			ResetButtonNames ();
-		} else {
-			anim.CrossFade (  ConsumeButton.GetComponentInChildren<Text> ().text, 0.5f);
-		}
-		Move = 0;
-		anim.SetFloat ("Move", Move);
-		CurrentButtonPressed = "Consume";
-	}
-	public void AggressiveButtonClicked ()
-	{
-		if (CurrentButtonPressed != "Aggressive") 
-		{
-			Pose = 1;
-			ChangePose = true;
-			ResetButtonNames ();
-		} else {
-			anim.CrossFade (  AggressiveButton.GetComponentInChildren<Text> ().text, 0.5f);
-		}
-		Move = 0;
-		anim.SetFloat ("Move", Move);
-		CurrentButtonPressed = "Aggressive";
-	}
-	bool BackWards =false;
-	public void WalkButtonClicked()
-	{
-		if (Move < 3 && !BackWards) 
-		{
-			Move++;
-		}
-		else 
-		{
-			BackWards = true;
-			Move--;
-			if (Move == 1) {
-				BackWards = false;
-			}
-		}
-		anim.SetFloat ("Move", Move);
+        Move = 0;
+        anim.SetFloat("Move", Move);
+        CurrentButtonPressed = "Lay";
+    }
+    public void ConsumeButtonClicked()
+    {
+        if (CurrentButtonPressed != "Consume")
+        {
+            Pose = 5;
+            ChangePose = true;
+            ResetButtonNames();
+        } else {
+            anim.CrossFade(ConsumeButton.GetComponentInChildren<Text>().text, 0.5f);
+        }
+        Move = 0;
+        anim.SetFloat("Move", Move);
+        CurrentButtonPressed = "Consume";
+    }
+    public void AggressiveButtonClicked()
+    {
+        if (CurrentButtonPressed != "Aggressive")
+        {
+            Pose = 1;
+            ChangePose = true;
+            ResetButtonNames();
+        } else {
+            anim.CrossFade(AggressiveButton.GetComponentInChildren<Text>().text, 0.5f);
+        }
+        Move = 0;
+        anim.SetFloat("Move", Move);
+        CurrentButtonPressed = "Aggressive";
+    }
+    bool BackWards = false;
+    public void WalkButtonClicked()
+    {
+        if (Move < 3 && !BackWards)
+        {
+            Move++;
+        }
+        else
+        {
+            BackWards = true;
+            Move--;
+            if (Move == 1) {
+                BackWards = false;
+            }
+        }
+        anim.SetFloat("Move", Move);
 
-		if (Pose != 4) {
-			ChangePose = true;
-			//ResetButtonNames ();
-		}
-		Pose = 4;
-		CurrentButtonPressed = "Walk";
+        if (Pose != 4) {
+            ChangePose = true;
+            //ResetButtonNames ();
+        }
+        Pose = 4;
+        CurrentButtonPressed = "Walk";
     }
 
     public void RunButtonClicked()
     {
-         if (Move < 3 && !BackWards)
-         {
-             Move++;
-          }
-          else
-          {
-             BackWards = true;
-               Move--;
-                 if (Move == 1)
-                {
-                   BackWards = false;
-                }
-         }
-         anim.SetFloat("Move", Move);
+        if (Move < 3 && !BackWards)
+        {
+            Move++;
+        }
+        else
+        {
+            BackWards = true;
+            Move--;
+            if (Move == 1)
+            {
+                BackWards = false;
+            }
+        }
+        anim.SetFloat("Move", Move);
 
-          if (Pose != 4)
-         {
-             ChangePose = true;
-             //ResetButtonNames ();
-          }
-          Pose = 4;
-          CurrentButtonPressed = "Walk";
-       
+        if (Pose != 4)
+        {
+            ChangePose = true;
+            //ResetButtonNames ();
+        }
+        Pose = 4;
+        CurrentButtonPressed = "Walk";
+
     }
 
     public void Walk()
@@ -268,6 +270,50 @@ public class AnimateV2 : MonoBehaviour {
         RunButtonClicked();
         iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 6, "time", 10, "easeType", "linear"));
     }
+
+    public void scene1() { //comes from tree
+        WalkButtonClicked();
+        iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 2, "time", 5, "easeType", "linear", "oncomplete", "StandButtonClicked"));
+        iTween.RotateBy(gameObject, iTween.Hash("delay", 5, "y", -.25, "time", 1.5));
+    }
+
+    public void scene2()
+    { //runs at you
+        RunButtonClicked();
+        RunButtonClicked();
+        RunButtonClicked();
+        iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 5.5,  "time", 5, "easeType", "linear", "oncomplete", "StandButtonClicked"));
+        iTween.RotateBy(gameObject, iTween.Hash("delay", 5, "y", -.1, "time", 1.5));
+    }
+    public void scene3() {
+        //sits
+        SitButtonClicked();
+    }
+    public void scene4()
+    {
+        //sniffs, diggs, stick
+        anim.CrossFade("IdleSniff", CrossfadeVal);
+        iTween.RotateBy(gameObject, iTween.Hash("y", 0, "time", 1.5, "oncomplete", "scene4a"));
+
+
+    }
+    private void scene4a() {
+        anim.CrossFade("IdleDig", CrossfadeVal);
+        iTween.RotateBy(gameObject, iTween.Hash("y", 0, "time", 1.5, "oncomplete", "scene4b"));
+    }
+
+    private void scene4b()
+    {
+        StandButtonClicked();
+        sticky.GetComponent<Renderer>().enabled = true;
+
+    }
+    public void scene5() {
+
+        sticky.AddForce(150, 350, 2000);
+        //sticky.AddTorque(500000, 0, -500000);
+    }
+
 
     void ResetButtonNames()
 	{
