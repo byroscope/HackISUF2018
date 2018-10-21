@@ -12,8 +12,8 @@ public class VoiceRecog : MonoBehaviour
 
     private KeywordRecognizer m_Recognizer;
     public GameObject Cube;
-    public GameObject Sphere;
     public AnimateV2 dog;
+    public GameObject word;
 
     void Start()
     {
@@ -36,7 +36,7 @@ public class VoiceRecog : MonoBehaviour
        // float newY = (0);
         float newZ = (1);
 
-        print("args.text");
+        print(args.text);
 
         if (args.text == m_Keywords[0])
         {
@@ -60,6 +60,8 @@ public class VoiceRecog : MonoBehaviour
         if (args.text == m_Keywords[3])
         {
             //Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
+            word.GetComponent<Renderer>().enabled = true;
+            word.GetComponent<Text>().text = "lakisudhfi";
             
         }
         if (args.text == m_Keywords[4])
