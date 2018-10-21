@@ -11,78 +11,65 @@ public class VoiceRecog : MonoBehaviour
     private string[] m_Keywords;
 
     private KeywordRecognizer m_Recognizer;
-    public GameObject Cube;
+    public ConfidenceLevel confidence = ConfidenceLevel.Low;
     public AnimateV2 dog;
-    public GameObject word;
+    
 
     void Start()
     {
-        m_Keywords = new string[7];
-        m_Keywords[0] = "sit";
-        m_Keywords[1] = "stand";
-        m_Keywords[2] = "walk";
-        m_Keywords[3] = "text";
-        m_Keywords[4] = "run";
-        m_Keywords[5] = "change";
-        m_Keywords[6] = "throw";
+        m_Keywords = new string[12];
+        m_Keywords[0] = "out";
+        m_Keywords[1] = "called";
+        m_Keywords[2] = "Sit";
+        m_Keywords[3] = "sniffing";
+        m_Keywords[4] = "fetch";
+        m_Keywords[5] = "friend";
+        m_Keywords[6] = "walks";
+        m_Keywords[7] = "loves";
+        m_Keywords[8] = "runs";
+        m_Keywords[9] = "smell";
+        m_Keywords[10] = "play";
+        m_Keywords[11] = "chases";
 
-        m_Recognizer = new KeywordRecognizer(m_Keywords);
+
+        m_Recognizer = new KeywordRecognizer(m_Keywords, confidence);
         m_Recognizer.OnPhraseRecognized += OnPharseRecognized;
         m_Recognizer.Start();
     }
 
     private void OnPharseRecognized(PhraseRecognizedEventArgs args)
     {
-        float newX = UnityEngine.Random.Range(-3, 3);
-        float newY = UnityEngine.Random.Range(-3, 3);
-        //float newX = (0);
-       // float newY = (0);
-        float newZ = (1);
-
         print(args.text);
 
-        if (args.text == m_Keywords[0])
+        if (args.text == m_Keywords[0] || args.text == m_Keywords[6])
         {
-            //Instantiate(Cube, new Vector3(newX, newZ, newY), Quaternion.identity);
-            dog.SitButtonClicked();
-           
+            dog.scene1();
+            m_Keywords[6] = "";
         }
-
-        if (args.text == m_Keywords[1])
+        if (args.text == m_Keywords[1] || args.text == m_Keywords[7])
         {
-            //Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
-            dog.StandButtonClicked();
+            dog.scene2();
+            m_Keywords[7] = "";
         }
-
-        if (args.text == m_Keywords[2])
+        if (args.text == m_Keywords[2] || args.text == m_Keywords[8])
         {
-            //Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
-            dog.Walk();
+            dog.scene3();
+            m_Keywords[8] = "";
         }
-
-        if (args.text == m_Keywords[3])
+        if (args.text == m_Keywords[3] || args.text == m_Keywords[9])
         {
-            word.GetComponent<Renderer>().enabled = true;
+            dog.scene4();
+            m_Keywords[9] = "";
         }
-
-        if (args.text == m_Keywords[5])
+        if (args.text == m_Keywords[4] || args.text == m_Keywords[10])
         {
-            word.GetComponent<TextMesh>().text = "lakisudhfi";
-
+            dog.scene5();
+            m_Keywords[10] = "";
         }
-        if (args.text == m_Keywords[4])
+        if (args.text == m_Keywords[5] || args.text == m_Keywords[11])
         {
-            //Instantiate(Sphere, new Vector3(newX, newZ, newY), Quaternion.identity);
-            dog.Run();
-
-        }
-
-
-
-        if (args.text == m_Keywords[6]) {
-
-
-
+            dog.scene6();
+            m_Keywords[11] = "";
         }
 
     }
@@ -93,7 +80,7 @@ public class VoiceRecog : MonoBehaviour
     {
        // print("yoyo");
         if (Input.GetKeyDown("1")) {
-            dog.scene1();
+            dog.scene1(); 
         }
         if (Input.GetKeyDown("2"))
         {
@@ -101,15 +88,23 @@ public class VoiceRecog : MonoBehaviour
         }
         if (Input.GetKeyDown("3"))
         {
+            
             dog.scene3();
         }
         if (Input.GetKeyDown("4"))
         {
+            
             dog.scene4();
         }
         if (Input.GetKeyDown("5"))
         {
+            
             dog.scene5();
+        }
+        if (Input.GetKeyDown("6"))
+        {
+            
+            dog.scene6();
         }
     }
 }

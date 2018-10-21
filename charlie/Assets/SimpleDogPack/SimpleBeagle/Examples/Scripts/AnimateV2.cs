@@ -22,7 +22,7 @@ public class AnimateV2 : MonoBehaviour {
     private static System.Timers.Timer aTimer;
 
     public Rigidbody sticky;
-
+    public GameObject word;
     private GameObject AggressiveButton;
     private GameObject LayButton;
     private GameObject StandButton;
@@ -31,6 +31,11 @@ public class AnimateV2 : MonoBehaviour {
     public Rigidbody RigBody;
     public Rigidbody enviroFloor;
     private float CrossfadeVal = 0.25f;
+
+
+
+
+    private int textNum = 0;
     void Start()
     {
         AggressiveButton = GameObject.Find("Aggressive");
@@ -134,6 +139,31 @@ public class AnimateV2 : MonoBehaviour {
                 }
                 CurrentPose = Pose;
             }
+        }
+
+        switch (textNum)
+        {
+            case 0:
+                word.GetComponent<TextMesh>().text = "Moe is walking through the\nforest, enjoying the weather\nwhen a dog walks out.";
+                break;
+            case 1:
+                word.GetComponent<TextMesh>().text = "Moe was startled at first,\nbut he loves dogs,\nso he called him over.";
+                break;
+            case 2:
+                word.GetComponent<TextMesh>().text = "The dog playfully runs over.\n\"Sit!\", exclaims moe";
+                break;
+            case 3:
+                word.GetComponent<TextMesh>().text = "Sensing an exciting smell\nthe dog starts digging\nand sniffing around";// -\n its a stick";
+                break;
+            case 4:
+                word.GetComponent<TextMesh>().text = "The dog found a stick!\nMoe and the dog\ndecide to play fetch";
+                break;
+            case 5:
+                word.GetComponent<TextMesh>().text = "The dog gleefuly chases\nafter the stck that his new\nfriend had thrown";
+                break;
+            case 6:
+                word.GetComponent<TextMesh>().text = "Goodbye doggo!";
+                break;                               
         }
     }
     public void StandButtonClicked()
@@ -257,37 +287,28 @@ public class AnimateV2 : MonoBehaviour {
 
     }
 
-    public void Walk()
-    {
-        WalkButtonClicked();
-        iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 2, "time", 5, "easeType", "linear"));
-    }
-
-    public void Run()
-    {
-        RunButtonClicked();
-        RunButtonClicked();
-        RunButtonClicked();
-        iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 6, "time", 10, "easeType", "linear"));
-    }
-
     public void scene1() { //comes from tree
+        
         WalkButtonClicked();
         iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 2, "time", 5, "easeType", "linear", "oncomplete", "StandButtonClicked"));
         iTween.RotateBy(gameObject, iTween.Hash("delay", 5, "y", -.25, "time", 1.5));
+        Invoke("NextText", 5);
+
     }
 
     public void scene2()
     { //runs at you
         RunButtonClicked();
+        iTween.MoveBy(gameObject, iTween.Hash("delay", 1, "z", 5.5,  "time", 5, "easeType", "linear", "oncomplete", "StandButtonClicked"));
         RunButtonClicked();
         RunButtonClicked();
-        iTween.MoveBy(gameObject, iTween.Hash("delay", .5, "z", 5.5,  "time", 5, "easeType", "linear", "oncomplete", "StandButtonClicked"));
-        iTween.RotateBy(gameObject, iTween.Hash("delay", 5, "y", -.1, "time", 1.5));
+        iTween.RotateBy(gameObject, iTween.Hash("delay", 5.5, "y", -.1, "time", 1.5));
+        Invoke("NextText", 6); //"sit"
     }
     public void scene3() {
         //sits
         SitButtonClicked();
+        Invoke("NextText", 1);//"start to dig"
     }
     public void scene4()
     {
@@ -299,19 +320,31 @@ public class AnimateV2 : MonoBehaviour {
     }
     private void scene4a() {
         anim.CrossFade("IdleDig", CrossfadeVal);
-        iTween.RotateBy(gameObject, iTween.Hash("y", 0, "time", 1.5, "oncomplete", "scene4b"));
+        iTween.RotateBy(gameObject, iTween.Hash("y", 0, "time", 2, "oncomplete", "scene4b"));// wait 2 sec
+    
     }
 
     private void scene4b()
     {
         StandButtonClicked();
         sticky.GetComponent<Renderer>().enabled = true;
+        Invoke("NextText", 1);
 
     }
     public void scene5() {
-
         sticky.AddForce(150, 350, 2000);
-        //sticky.AddTorque(500000, 0, -500000);
+        sticky.AddTorque(500, 0, -500);
+        Invoke("NextText", 2);
+    }
+
+    public void scene6()
+    {
+        RunButtonClicked();
+        iTween.RotateBy(gameObject, iTween.Hash("delay", .5, "y", .35, "time", 1.5));
+        RunButtonClicked();
+        iTween.MoveBy(gameObject, iTween.Hash("delay", 1, "z", 18, "time", 9, "easeType", "linear"));
+        RunButtonClicked();
+        Invoke("NextText", 5);
     }
 
 
@@ -322,4 +355,10 @@ public class AnimateV2 : MonoBehaviour {
 		print ("change button name and it is now " + ButtonToReset.GetComponentInChildren<Text> ().text);
 		ButtonToReset.GetComponentInChildren<ChangeButtonText> ().ValuetoGet = 0;
 	}
+
+
+    private void NextText()
+    {
+        textNum++;
+    }
 }
